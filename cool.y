@@ -134,15 +134,11 @@
     %type <classes> class_list
     %type <class_> class
     %type <features> feature_list
-    /*
     %type <feature> feature
     %type <formals> formal_list
-    */
     %type <formal> formal
-    /*
-    %type <exprs> expr_list
-    */
-    %type <expr> expr
+    %type <expressions> expr_list
+    %type <expression> expr
     
     /* Precedence declarations go here. */
     
@@ -161,13 +157,11 @@
     class_list
     : class			/* single class */
     {
-        @$ = @1;
         $$ = single_Classes($1);
         parse_results = $$;
     }
     | class_list class	/* several classes */
     {
-        @$ = @2;
         $$ = append_Classes($1, single_Classes($2)); 
         parse_results = $$;
     }
@@ -186,10 +180,48 @@
     ;
 
     /* Feature list may be empty, but no empty features in list. */
-    feature_list:		/* empty */
-    {  $$ = nil_Features(); }
+    feature_list
+    :		/* empty */
+    {
+        $$ = nil_Features();
+    }
+    | feature               /* single feature */
+    {
+        $$ = single_Features($1);
+    }
+    | feature_list feature  /* several features */
+    {
+        $$ = append_Features($1, single_Features($2));
+    }
+    ;
     
-    
+    /* */
+    feature
+    : OBJECTID ':' TYPEID
+    {
+    }
+    | OBJECTID ':' TYPEID DARROW expr_list
+    {
+    }
+    ;
+
+    /* */ 
+    formal_list
+    :		                /* empty */
+    {
+        $$ = nil_Formals();
+    }
+    | formal               /* single formal */
+    {
+        $$ = single_Formals($1);
+    }
+    | formal_list formal  /* several formals */
+    {
+        $$ = append_Formals($1, single_Formals($2));
+    }
+    ;
+
+    /* */
     formal
     : OBJECTID ':' TYPEID
     {
@@ -197,10 +229,26 @@
     }
     ;
 
+    /* */
+    expr_list
+    :                       /* empty */
+    {
+        $$ = nil_Expressions();
+    }
+    : expr                  /* single expr */
+    {
+        $$ = single_Expressions($1);
+    }
+    | expr_list expr        /* several exprs */
+    {
+        $$ = append_Expressions($1, single_Expressions($2));
+    }
+    ;
+
+    /* */
     expr
     : OBJECTID '<' '-'
     {
-        $$ = nil_Features();
     }
     ;
     
