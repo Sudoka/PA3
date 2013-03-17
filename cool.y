@@ -143,7 +143,11 @@
     %type <case_> case
     
     /* Precedence declarations go here. */
-    
+    %left '<' '=' LE
+    %left '+' '-'
+    %left '*' '/'
+    %right THEN ELSE
+    %right LOOP POOL
     
     %%
     /* 
@@ -167,6 +171,7 @@
         $$ = append_Classes($1, single_Classes($2)); 
         parse_results = $$;
     }
+    | error '\n'
     ;
     
     /* If no parent is specified, the class inherits from the Object class. */
@@ -179,6 +184,7 @@
     {
         $$ = class_($2, $4, $6, stringtable.add_string(curr_filename));
     }
+    | error '\n'
     ;
 
     /* Feature list may be empty, but no empty features in list. */
@@ -195,9 +201,10 @@
     {
         $$ = append_Features($1, single_Features($2));
     }
+    | error ';'
     ;
     
-    /* */
+    /* feature */
     feature
     : OBJECTID ':' TYPEID
     {
@@ -215,9 +222,10 @@
     {
         $$ = method($1, $3, $6, $8);
     }
+    | error '\n'
     ;
 
-    /* */ 
+    /* formal list */ 
     formal_list
     :		                /* empty */
     {
@@ -231,33 +239,36 @@
     {
         $$ = append_Formals($1, single_Formals($3));
     }
+    | error '\n'
     ;
 
-    /* */
+    /* formal */
     formal
     : OBJECTID ':' TYPEID
     {
         $$ = formal($1, $3);
     }
+    | error '\n'
     ;
 
-    /* */
+    /* expression list */
     expr_list
     :                       /* empty */
     {
         $$ = nil_Expressions();
     }
-    | expr                  /* single expr */
+    | expr ';'              /* single expr */
     {
         $$ = single_Expressions($1);
     }
-    | expr_list expr        /* several exprs */
+    | expr_list expr ';'    /* several exprs */
     {
         $$ = append_Expressions($1, single_Expressions($2));
     }
+    | error '\n'
     ;
 
-    /* */
+    /* expression */
     expr
     : OBJECTID DARROW expr
     {
@@ -271,8 +282,9 @@
     {
         $$ = dispatch($1, $3, $5);
     }
-    | OBJECTID '(' expr_list ')'
+    | expr '@' TYPEID '.' OBJECTID '(' expr_list ')'
     {
+        $$ = static_dispatch($1, $3, $5, $7);
     }
     | IF expr THEN expr ELSE expr FI
     {
@@ -290,8 +302,9 @@
     {
         $$ = let($2, $4, no_expr(), $6);
     }
-    | case_list /* CASE */
+    | CASE expr OF case_list ESAC
     {
+        $$ = typcase($2, $4);
     }
     | NEW TYPEID
     {
@@ -357,22 +370,32 @@
     {
         $$ = bool_const($1);
     }
+    | error '\n'
     ;
 
     /* case */
     case_list
-    : case
+    :		                /* empty */
     {
+        $$ = nil_Cases();
     }
-    | case case_list
+    | case               /* single case */
     {
+        $$ = single_Cases($1);
     }
+    | case_list case  /* several cases */
+    {
+        $$ = append_Cases($1, single_Cases($2));
+    }
+    | error '\n'
     ;
 
     case
-    : CASE expr OF ESAC
+    : OBJECTID ':' TYPEID DARROW expr ';'
     {
+        $$ = branch($1, $3, $5);
     }
+    | error '\n'
     ;
 
     
