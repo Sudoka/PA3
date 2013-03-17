@@ -171,7 +171,6 @@
         $$ = append_Classes($1, single_Classes($2)); 
         parse_results = $$;
     }
-    | error '\n'
     ;
     
     /* If no parent is specified, the class inherits from the Object class. */
@@ -184,7 +183,6 @@
     {
         $$ = class_($2, $4, $6, stringtable.add_string(curr_filename));
     }
-    | error '\n'
     ;
 
     /* Feature list may be empty, but no empty features in list. */
@@ -201,7 +199,6 @@
     {
         $$ = append_Features($1, single_Features($2));
     }
-    | error ';'
     ;
     
     /* feature */
@@ -222,7 +219,6 @@
     {
         $$ = method($1, $3, $6, $8);
     }
-    | error '\n'
     ;
 
     /* formal list */ 
@@ -239,7 +235,6 @@
     {
         $$ = append_Formals($1, single_Formals($3));
     }
-    | error '\n'
     ;
 
     /* formal */
@@ -248,7 +243,6 @@
     {
         $$ = formal($1, $3);
     }
-    | error '\n'
     ;
 
     /* expression list */
@@ -265,7 +259,6 @@
     {
         $$ = append_Expressions($1, single_Expressions($2));
     }
-    | error '\n'
     ;
 
     /* expression */
@@ -370,7 +363,6 @@
     {
         $$ = bool_const($1);
     }
-    | error '\n'
     ;
 
     /* case */
@@ -387,7 +379,6 @@
     {
         $$ = append_Cases($1, single_Cases($2));
     }
-    | error '\n'
     ;
 
     case
@@ -395,7 +386,6 @@
     {
         $$ = branch($1, $3, $5);
     }
-    | error '\n'
     ;
 
     
