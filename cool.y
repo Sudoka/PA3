@@ -207,7 +207,7 @@
     {
         $$ = attr($1, $3, no_expr());
     }
-    | OBJECTID ':' TYPEID DARROW expr
+    | OBJECTID ':' TYPEID ASSIGN expr
     {
         $$ = attr($1, $3, $5);
     }
@@ -263,7 +263,7 @@
 
     /* expression */
     expr
-    : OBJECTID DARROW expr
+    : OBJECTID ASSIGN expr
     {
         $$ = assign($1, $3);
     }
