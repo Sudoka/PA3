@@ -145,10 +145,16 @@
     %type <case_> case
     
     /* Precedence declarations go here. */
+    %left ASSIGN
+    %left NOT
     %nonassoc '=' LE
     %left '<'
     %left '+' '-'
     %left '*' '/'
+    %left ISVOID
+    %left '~'
+    %left '@'
+    %left '.'
     %right THEN ELSE
     %right LOOP POOL
     
