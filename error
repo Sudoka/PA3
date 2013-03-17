@@ -7,13 +7,11 @@ submission: ..
 
 	-1 (atoi)	 the atoi program
 	-1 (badblock)	 a block with multiple errors
-	-1 (baddispatch3)	 bad dispatch syntax
 	-1 (badexprlist)	 bad expr lists 
 	-1 (badfeaturenames)	 method and attribute names capitalized
 	-1 (badfeatures)	 multiple errors in features in a class
 	-1 (complex)	 a short program
 	-1 (dispatcharglist)	 dispatch with several arguments
-	-1 (dispatchonearg)	 dispatch with one argument
 	-1 (equalsassociativity)	 testing associativity of equals
 	-1 (firstbindingerrored)	 error recovery after a binding error
 	-1 (firstclasserrored)	 error recovery after a bad class declaration
@@ -29,8 +27,8 @@ submission: ..
 	-1 (unaryassociativity)	 tests associativity of unary operators
 	-1 (while)	 valid and invalid while loops
 =====================================================================
-You got a score of 47 out of 70.
+You got a score of 49 out of 70.
 
 Submit code: 
-47:67c6a1e7ce56d3d6fa748ab6d9af3fd7
+49:f457c545a9ded88f18ecee47145a72c0
 

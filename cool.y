@@ -138,6 +138,7 @@
     %type <formals> formal_list
     %type <formal> formal
     %type <expressions> expr_list
+    %type <expressions> comma_expr_list
     %type <expression> expr
     %type <cases> case_list
     %type <case_> case
@@ -261,17 +262,33 @@
     }
     ;
 
+    /* comma expression list */
+    comma_expr_list
+    :                       /* empty */
+    {
+        $$ = nil_Expressions();
+    }
+    | expr                  /* single expr */
+    {
+        $$ = single_Expressions($1);
+    }
+    | expr_list ',' expr    /* several exprs */
+    {
+        $$ = append_Expressions($1, single_Expressions($3));
+    }
+    ;
+
     /* expression */
     expr
     : OBJECTID ASSIGN expr
     {
         $$ = assign($1, $3);
     }
-    | OBJECTID '(' expr_list ')'
+    | OBJECTID '(' comma_expr_list ')'
     {
         $$ = dispatch(object(idtable.add_string("Self")), $1, $3);
     }
-    | expr '.' OBJECTID '(' expr_list ')'
+    | expr '.' OBJECTID '(' comma_expr_list ')'
     {
         $$ = dispatch($1, $3, $5);
     }
