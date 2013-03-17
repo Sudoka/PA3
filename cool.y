@@ -273,7 +273,7 @@
     {
         $$ = single_Expressions($1);
     }
-    | expr_list ',' expr    /* several exprs */
+    | comma_expr_list ',' expr    /* several exprs */
     {
         $$ = append_Expressions($1, single_Expressions($3));
     }
@@ -292,7 +292,7 @@
     {
         $$ = 
     }
-    | expr_list ',' expr    
+    | let_expr_list ',' expr    
     {
         $$ = append_Expressions($1, single_Expressions($3));
     }
@@ -313,7 +313,7 @@
     {
         $$ = dispatch($1, $3, $5);
     }
-    | expr '@' TYPEID '.' OBJECTID '(' expr_list ')'
+    | expr '@' TYPEID '.' OBJECTID '(' comma_expr_list ')'
     {
         $$ = static_dispatch($1, $3, $5, $7);
     }
