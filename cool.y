@@ -180,6 +180,7 @@
         $$ = append_Classes($1, single_Classes($2)); 
         parse_results = $$;
     }
+    | class_list error ';'
     ;
     
     /* If no parent is specified, the class inherits from the Object class. */
@@ -192,6 +193,8 @@
     {
         $$ = class_($2, $4, $6, stringtable.add_string(curr_filename));
     }
+    | CLASS error ';'
+    | class error ';'
     ;
 
     /* Feature list may be empty, but no empty features in list. */
@@ -208,6 +211,8 @@
     {
         $$ = append_Features($1, single_Features($2));
     }
+    | feature_list error ';'
+    | error ';'
     ;
     
     /* feature */
@@ -228,6 +233,8 @@
     {
         $$ = method($1, $3, $6, $8);
     }
+    | feature error '\n'
+    | error '\n'
     ;
 
     /* formal list */ 
@@ -244,6 +251,7 @@
     {
         $$ = append_Formals($1, single_Formals($3));
     }
+    | formal_list error ')'
     ;
 
     /* formal */
@@ -252,15 +260,12 @@
     {
         $$ = formal($1, $3);
     }
+    | formal error ')'
     ;
 
     /* expression list */
     expr_list
-    :                       /* empty */
-    {
-        $$ = nil_Expressions();
-    }
-    | expr ';'              /* single expr */
+    :expr ';'              /* single expr */
     {
         $$ = single_Expressions($1);
     }
@@ -268,6 +273,7 @@
     {
         $$ = append_Expressions($1, single_Expressions($2));
     }
+    | expr_list error ';'
     ;
 
     /* comma expression list */
@@ -284,6 +290,7 @@
     {
         $$ = append_Expressions($1, single_Expressions($3));
     }
+    | comma_expr_list error ','
     ;
 
     /* let expression list */
@@ -304,6 +311,7 @@
         $$ = append_Expressions($1, single_Expressions($3));
     }
     */
+    | let_expr_list error '\n'
     ;
 
     /* expression */
@@ -412,6 +420,8 @@
     {
         $$ = bool_const($1);
     }
+    | '{' error '}'
+    | expr error '\n'
     ;
 
     /* case */
@@ -428,6 +438,7 @@
     {
         $$ = append_Cases($1, single_Cases($2));
     }
+    | case_list error ESAC
     ;
 
     case
@@ -435,6 +446,7 @@
     {
         $$ = branch($1, $3, $5);
     }
+    | case error ESAC
     ;
 
     
