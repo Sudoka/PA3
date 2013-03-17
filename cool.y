@@ -145,7 +145,8 @@
     %type <case_> case
     
     /* Precedence declarations go here. */
-    %left '<' '=' LE
+    %nonassoc '=' LE
+    %left '<'
     %left '+' '-'
     %left '*' '/'
     %right THEN ELSE

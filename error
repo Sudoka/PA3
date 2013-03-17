@@ -9,11 +9,9 @@ submission: ..
 	-1 (badexprlist)	 bad expr lists 
 	-1 (badfeaturenames)	 method and attribute names capitalized
 	-1 (badfeatures)	 multiple errors in features in a class
-	-1 (equalsassociativity)	 testing associativity of equals
 	-1 (firstbindingerrored)	 error recovery after a binding error
 	-1 (firstclasserrored)	 error recovery after a bad class declaration
 	-1 (letinitmultiplebindings)	 let expression with multiple bindings
-	-1 (lteassociativity)	 testing associativity of <=
 	-1 (multipleclasses)	 multiple classes in a file
 	-1 (multiplemethoderrors)	 a class with multiple methods and errors 
 	-1 (nestedlet)	 nested let expressions with different numbers of bindings
@@ -21,8 +19,8 @@ submission: ..
 	-1 (unaryassociativity)	 tests associativity of unary operators
 	-1 (while)	 valid and invalid while loops
 =====================================================================
-You got a score of 55 out of 70.
+You got a score of 57 out of 70.
 
 Submit code: 
-55:b53b3a3d6ab90ce0268229151c9bde11
+57:72b32a1f754ba1c09b3695e0cb6cde7f
 
