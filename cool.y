@@ -139,6 +139,8 @@
     %type <formal> formal
     %type <expressions> expr_list
     %type <expression> expr
+    %type <cases> case_list
+    %type <case_> case
     
     /* Precedence declarations go here. */
     
@@ -181,15 +183,15 @@
 
     /* Feature list may be empty, but no empty features in list. */
     feature_list
-    :		/* empty */
+    :		                    /* empty */
     {
         $$ = nil_Features();
     }
-    | feature               /* single feature */
+    | feature ';'               /* single feature */
     {
         $$ = single_Features($1);
     }
-    | feature_list feature  /* several features */
+    | feature_list feature ';'  /* several features */
     {
         $$ = append_Features($1, single_Features($2));
     }
@@ -199,9 +201,19 @@
     feature
     : OBJECTID ':' TYPEID
     {
+        $$ = attr($1, $3, no_expr());
     }
-    | OBJECTID ':' TYPEID DARROW expr_list
+    | OBJECTID ':' TYPEID DARROW expr
     {
+        $$ = attr($1, $3, $5);
+    }
+    | OBJECTID '(' ')' ':' TYPEID '{' expr '}'
+    {
+        $$ = method($1, nil_Formals(), $5, $7);
+    }
+    | OBJECTID '(' formal_list ')' ':' TYPEID '{' expr '}'
+    {
+        $$ = method($1, $3, $6, $8);
     }
     ;
 
@@ -215,9 +227,9 @@
     {
         $$ = single_Formals($1);
     }
-    | formal_list formal  /* several formals */
+    | formal_list ',' formal  /* several formals */
     {
-        $$ = append_Formals($1, single_Formals($2));
+        $$ = append_Formals($1, single_Formals($3));
     }
     ;
 
@@ -225,7 +237,7 @@
     formal
     : OBJECTID ':' TYPEID
     {
-        $$ = nil_Features();
+        $$ = formal($1, $3);
     }
     ;
 
@@ -235,7 +247,7 @@
     {
         $$ = nil_Expressions();
     }
-    : expr                  /* single expr */
+    | expr                  /* single expr */
     {
         $$ = single_Expressions($1);
     }
@@ -247,10 +259,122 @@
 
     /* */
     expr
-    : OBJECTID '<' '-'
+    : OBJECTID DARROW expr
+    {
+        $$ = assign($1, $3);
+    }
+    | OBJECTID '(' expr_list ')'
+    {
+        $$ = dispatch(object(idtable.add_string("Self")), $1, $3);
+    }
+    | expr '.' OBJECTID '(' expr_list ')'
+    {
+        $$ = dispatch($1, $3, $5);
+    }
+    | OBJECTID '(' expr_list ')'
+    {
+    }
+    | IF expr THEN expr ELSE expr FI
+    {
+        $$ = cond($2, $4, $6);
+    }
+    | WHILE expr LOOP expr POOL
+    {
+        $$ = loop($2, $4);
+    }
+    | '{' expr_list '}'
+    {
+        $$ = block($2);
+    }
+    | LET OBJECTID ':' TYPEID IN expr /* TODO */
+    {
+        $$ = let($2, $4, no_expr(), $6);
+    }
+    | case_list /* CASE */
+    {
+    }
+    | NEW TYPEID
+    {
+        $$ = new_($2);
+    }
+    | ISVOID expr
+    {
+        $$ = isvoid($2);
+    }
+    | expr '+' expr
+    {
+        $$ = plus($1, $3);
+    }
+    | expr '-' expr
+    {
+        $$ = sub($1, $3);
+    }
+    | expr '*' expr
+    {
+        $$ = mul($1, $3);
+    }
+    | expr '/' expr
+    {
+        $$ = divide($1, $3);
+    }
+    | '~' expr
+    {
+        $$ = neg($2);
+    }
+    | expr '<' expr
+    {
+        $$ = lt($1, $3);
+    }
+    | expr '=' expr
+    {
+        $$ = eq($1, $3);
+    }
+    | expr LE expr
+    {
+        $$ = leq($1, $3);
+    }
+    | NOT expr
+    {
+        $$ = comp($2);
+    }
+    | '(' expr ')'
+    {
+        $$ = $2;
+    }
+    | OBJECTID
+    {
+        $$ = object($1);
+    }
+    | INT_CONST
+    {
+        $$ = int_const($1);
+    }
+    | STR_CONST
+    {
+        $$ = string_const($1);
+    }
+    | BOOL_CONST
+    {
+        $$ = bool_const($1);
+    }
+    ;
+
+    /* case */
+    case_list
+    : case
+    {
+    }
+    | case case_list
     {
     }
     ;
+
+    case
+    : CASE expr OF ESAC
+    {
+    }
+    ;
+
     
     /* end of grammar */
     %%
