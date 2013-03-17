@@ -139,6 +139,7 @@
     %type <formal> formal
     %type <expressions> expr_list
     %type <expressions> comma_expr_list
+    %type <expressions> let_expr_list
     %type <expression> expr
     %type <cases> case_list
     %type <case_> case
@@ -278,6 +279,26 @@
     }
     ;
 
+    /* let expression list */
+    let_expr_list
+    :                       /* empty */
+    {
+        /*
+        $$ = nil_Expressions();
+        */
+    }
+    /*
+    | OBJECTID ':' TYPEID   
+    {
+        $$ = 
+    }
+    | expr_list ',' expr    
+    {
+        $$ = append_Expressions($1, single_Expressions($3));
+    }
+    */
+    ;
+
     /* expression */
     expr
     : OBJECTID ASSIGN expr
@@ -308,9 +329,13 @@
     {
         $$ = block($2);
     }
-    | LET OBJECTID ':' TYPEID IN expr /* TODO */
+    | LET OBJECTID ':' TYPEID IN expr
     {
         $$ = let($2, $4, no_expr(), $6);
+    }
+    | LET OBJECTID ':' TYPEID ASSIGN expr let_expr_list IN expr
+    {
+        $$ = let($2, $4, $6, $9);
     }
     | CASE expr OF case_list ESAC
     {
