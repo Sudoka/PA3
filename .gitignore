@@ -1,3 +1,4 @@
 *.o
 cool-parse.cc
+grading/
 parser
