@@ -6,12 +6,10 @@ make: Leaving directory `/home/yyhuang/compiler/PA3'
 submission: ..
 
 	-1 (firstbindingerrored)	 error recovery after a binding error
-	-1 (letinitmultiplebindings)	 let expression with multiple bindings
-	-1 (nestedlet)	 nested let expressions with different numbers of bindings
 	-1 (secondbindingerrored)	 second binding of a let has an error
 =====================================================================
-You got a score of 66 out of 70.
+You got a score of 68 out of 70.
 
 Submit code: 
-66:3295c76acbf4caaed33c36b1b5fc2cb1
+68:a3f390d88e4c41f2747bfa2f1b5f87db
 
