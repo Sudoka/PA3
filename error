@@ -5,11 +5,9 @@ make: Leaving directory `/home/yyhuang/compiler/PA3'
 =====================================================================
 submission: ..
 
-	-1 (firstbindingerrored)	 error recovery after a binding error
-	-1 (secondbindingerrored)	 second binding of a let has an error
 =====================================================================
-You got a score of 68 out of 70.
+You got a score of 70 out of 70.
 
 Submit code: 
-68:a3f390d88e4c41f2747bfa2f1b5f87db
+70:7cbbc409ec990f19c78c75bd1e06f215
 

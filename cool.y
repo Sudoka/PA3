@@ -303,6 +303,7 @@
     {
         $$ = let($1, $3, $5, $7);
     }
+    | error ',' let_list
     | OBJECTID ':' TYPEID IN expr
     {
         $$ = let($1, $3, no_expr(), $5);
