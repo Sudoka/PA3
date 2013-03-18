@@ -179,6 +179,7 @@
         $$ = append_Classes($1, single_Classes($2)); 
         parse_results = $$;
     }
+    | class error '}'
     | class_list error '}'
     ;
     
@@ -192,6 +193,7 @@
     {
         $$ = class_($2, $4, $6, stringtable.add_string(curr_filename));
     }
+    | CLASS error ';'
     | class error ';'
     ;
 
@@ -209,6 +211,7 @@
     {
         $$ = append_Features($1, single_Features($2));
     }
+    | error ';'
     | feature_list error ';'
     ;
     
@@ -230,6 +233,7 @@
     {
         $$ = method($1, $3, $6, $8);
     }
+    | OBJECTID '(' formal_list ')' ':' TYPEID '{' error '}'
     | feature error '\n'
     ;
 
@@ -261,11 +265,7 @@
 
     /* expression list */
     expr_list
-    :                       /* empty */
-    {
-        $$ = nil_Expressions();
-    }
-    | expr ';'              /* single expr */
+    : expr ';'              /* single expr */
     {
         $$ = single_Expressions($1);
     }
@@ -273,6 +273,7 @@
     {
         $$ = append_Expressions($1, single_Expressions($2));
     }
+    | error ';'
     | expr_list error ';'
     ;
 
@@ -323,6 +324,7 @@
     {
         $$ = block($2);
     }
+    | '{' error ';'
     | LET OBJECTID ':' TYPEID IN expr
     {
         $$ = let($2, $4, no_expr(), $6);
@@ -383,6 +385,7 @@
     {
         $$ = $2;
     }
+    | '(' error ')'
     | OBJECTID
     {
         $$ = object($1);
@@ -399,7 +402,6 @@
     {
         $$ = bool_const($1);
     }
-    | expr error '\n'
     ;
 
     /* case */
