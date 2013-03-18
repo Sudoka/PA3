@@ -137,15 +137,23 @@
     %type <feature> feature
     %type <formals> formal_list
     %type <formal> formal
-    %type <expressions> expr_list
+    %type <expressions> expr_list comma_expr_list
     %type <expression> expr
     %type <cases> case_list
     %type <case_> case
     
     /* Precedence declarations go here. */
-    %left '<' '=' LE
+    %left ASSIGN
+    %left NOT
+    %nonassoc '=' LE
+    %left '<'
     %left '+' '-'
     %left '*' '/'
+    %left ISVOID
+    %left '~'
+    %left '@'
+    %left '.'
+
     %right THEN ELSE
     %right LOOP POOL
     
@@ -171,7 +179,7 @@
         $$ = append_Classes($1, single_Classes($2)); 
         parse_results = $$;
     }
-    | error '\n'
+    | class_list error '}'
     ;
     
     /* If no parent is specified, the class inherits from the Object class. */
@@ -184,7 +192,7 @@
     {
         $$ = class_($2, $4, $6, stringtable.add_string(curr_filename));
     }
-    | error '\n'
+    | class error ';'
     ;
 
     /* Feature list may be empty, but no empty features in list. */
@@ -201,7 +209,7 @@
     {
         $$ = append_Features($1, single_Features($2));
     }
-    | error ';'
+    | feature_list error ';'
     ;
     
     /* feature */
@@ -210,7 +218,7 @@
     {
         $$ = attr($1, $3, no_expr());
     }
-    | OBJECTID ':' TYPEID DARROW expr
+    | OBJECTID ':' TYPEID ASSIGN expr
     {
         $$ = attr($1, $3, $5);
     }
@@ -222,7 +230,7 @@
     {
         $$ = method($1, $3, $6, $8);
     }
-    | error '\n'
+    | feature error '\n'
     ;
 
     /* formal list */ 
@@ -239,7 +247,7 @@
     {
         $$ = append_Formals($1, single_Formals($3));
     }
-    | error '\n'
+    | formal_list error ')'
     ;
 
     /* formal */
@@ -248,7 +256,7 @@
     {
         $$ = formal($1, $3);
     }
-    | error '\n'
+    | formal error ')'
     ;
 
     /* expression list */
@@ -265,24 +273,41 @@
     {
         $$ = append_Expressions($1, single_Expressions($2));
     }
-    | error '\n'
+    | expr_list error ';'
+    ;
+
+    /* comma expression list */
+    comma_expr_list
+    :                           /* empty */
+    {
+        $$ = nil_Expressions();
+    }
+    | expr                      /* single expr */
+    {
+        $$ = single_Expressions($1);
+    }
+    | comma_expr_list ',' expr  /* several exprs */
+    {
+        $$ = append_Expressions($1, single_Expressions($3));
+    }
+    | comma_expr_list error ')'
     ;
 
     /* expression */
     expr
-    : OBJECTID DARROW expr
+    : OBJECTID ASSIGN expr
     {
         $$ = assign($1, $3);
     }
-    | OBJECTID '(' expr_list ')'
+    | OBJECTID '(' comma_expr_list ')'
     {
         $$ = dispatch(object(idtable.add_string("Self")), $1, $3);
     }
-    | expr '.' OBJECTID '(' expr_list ')'
+    | expr '.' OBJECTID '(' comma_expr_list ')'
     {
         $$ = dispatch($1, $3, $5);
     }
-    | expr '@' TYPEID '.' OBJECTID '(' expr_list ')'
+    | expr '@' TYPEID '.' OBJECTID '(' comma_expr_list ')'
     {
         $$ = static_dispatch($1, $3, $5, $7);
     }
@@ -298,9 +323,13 @@
     {
         $$ = block($2);
     }
-    | LET OBJECTID ':' TYPEID IN expr /* TODO */
+    | LET OBJECTID ':' TYPEID IN expr
     {
         $$ = let($2, $4, no_expr(), $6);
+    }
+    | LET OBJECTID ':' TYPEID ASSIGN expr IN expr
+    {
+        $$ = let($2, $4, $6, $8);
     }
     | CASE expr OF case_list ESAC
     {
@@ -370,7 +399,7 @@
     {
         $$ = bool_const($1);
     }
-    | error '\n'
+    | expr error '\n'
     ;
 
     /* case */
@@ -387,7 +416,6 @@
     {
         $$ = append_Cases($1, single_Cases($2));
     }
-    | error '\n'
     ;
 
     case
@@ -395,7 +423,6 @@
     {
         $$ = branch($1, $3, $5);
     }
-    | error '\n'
     ;
 
     

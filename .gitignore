@@ -1,4 +1,5 @@
 *.o
 cool-parse.cc
+cool.output
 grading/
 parser
